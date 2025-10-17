@@ -1,0 +1,67 @@
+{% extends "inventory/base.html" %}
+{% block content %}
+<h1 class="mb-3">Inventory Items</h1>
+
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-4">
+    <input
+      class="form-control"
+      name="q"
+      placeholder="Search items..."
+      value="{{ request.GET.q }}"
+    >
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+  <div class="col-auto">
+    <a class="btn btn-outline-secondary" href="{% url 'inventory:item_list_ui' %}">Clear</a>
+  </div>
+</form>
+
+<table class="table table-striped align-middle">
+  <thead class="table-light">
+    <tr>
+      <th>Name</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Category</th>
+      <th>Owner</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+      <tr>
+        <td>
+          <a href="{% url 'inventory:item_detail_ui' item.pk %}">
+            {{ item.name }}
+          </a>
+        </td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ item.price }}</td>
+        <td>
+          {% if item.category %}
+            {{ item.category.name }}
+          {% else %}
+            <span class="text-muted">—</span>
+          {% endif %}
+        </td>
+        <td>{{ item.owner.username }}</td>
+        <td>
+          <a class="btn btn-sm btn-outline-primary"
+             href="{% url 'inventory:item_detail_ui' item.pk %}">
+            View
+          </a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="6" class="text-center text-muted">
+          No items found.
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

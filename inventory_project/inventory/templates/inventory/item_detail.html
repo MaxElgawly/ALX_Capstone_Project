@@ -1,0 +1,55 @@
+{% extends "inventory/base.html" %}
+{% block content %}
+<h2 class="mb-3">{{ item.name }}</h2>
+
+<div class="mb-4">
+  <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+  <p><strong>Price:</strong> ${{ item.price }}</p>
+  <p>
+    <strong>Category:</strong>
+    {% if item.category %}
+      {{ item.category.name }}
+    {% else %}
+      <span class="text-muted">—</span>
+    {% endif %}
+  </p>
+  <p><strong>Description:</strong> {{ item.description|default:"No description" }}</p>
+</div>
+
+<h4 class="mt-5 mb-3">Change History</h4>
+<table class="table table-bordered">
+  <thead class="table-light">
+    <tr>
+      <th>Date</th>
+      <th>Changed By</th>
+      <th>Old Qty</th>
+      <th>New Qty</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+      <tr>
+        <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+        <td>
+          {% if log.changed_by %}
+            {{ log.changed_by.username }}
+          {% else %}
+            <span class="text-muted">System</span>
+          {% endif %}
+        </td>
+        <td>{{ log.old_quantity }}</td>
+        <td>{{ log.new_quantity }}</td>
+        <td>{{ log.reason|default:"—" }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" class="text-center text-muted">No change logs yet.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'inventory:item_list_ui' %}" class="btn btn-secondary mt-3">← Back to list</a>
+{% endblock %}
+
